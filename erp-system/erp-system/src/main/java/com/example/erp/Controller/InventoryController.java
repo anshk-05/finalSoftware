@@ -1,46 +1,71 @@
 package com.example.erp.Controller;
 
+import com.example.erp.DTO.InventoryDTO;
 import com.example.erp.Model.Inventory;
-import com.example.erp.Repository.InventoryRepository;
+import com.example.erp.Service.InventoryService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/inventory")
 public class InventoryController {
-    private final InventoryRepository inventoryRepository;
+    private final InventoryService inventoryService;
 
-    public InventoryController(InventoryRepository inventoryRepository) {
-        this.inventoryRepository = inventoryRepository;
+    public InventoryController(InventoryService inventoryService) {
+        this.inventoryService = inventoryService;
     }
 
+    // Get all inventory records
     @GetMapping
-    public List<Inventory> getAllInventory() {
-        return inventoryRepository.findAll();
+    public List<InventoryDTO> getAllInventory() {
+        return inventoryService.getAllInventory().stream()
+                .map(inventory -> new InventoryDTO(
+                        inventory.getInventoryId(),
+                        inventory.getProduct().getProductId(),
+                        inventory.getProduct().getProductName(),
+                        inventory.getStore() != null ? inventory.getStore().getStoreId() : null,
+                        inventory.getStore() != null ? inventory.getStore().getStoreName() : null,
+                        inventory.getStockLevel(),
+                        inventory.getReorderThreshold()
+                ))
+                .collect(Collectors.toList());
     }
 
+    // Get a single inventory record
+    @GetMapping("/{id}")
+    public InventoryDTO getInventoryById(@PathVariable Integer id) {
+        Inventory inventory = inventoryService.getInventoryById(id);
+        return new InventoryDTO(
+                inventory.getInventoryId(),
+                inventory.getProduct().getProductId(),
+                inventory.getProduct().getProductName(),
+                inventory.getStore() != null ? inventory.getStore().getStoreId() : null,
+                inventory.getStore() != null ? inventory.getStore().getStoreName() : null,
+                inventory.getStockLevel(),
+                inventory.getReorderThreshold()
+        );
+    }
+
+    // Create a new inventory record
     @PostMapping
     public Inventory createInventory(@RequestBody Inventory inventory) {
-        return inventoryRepository.save(inventory);
+        return inventoryService.createInventory(inventory);
     }
 
+    // Update an inventory record
     @PutMapping("/{id}")
     public Inventory updateInventory(@PathVariable Integer id, @RequestBody Inventory inventoryDetails) {
-        Inventory inventory = inventoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Inventory not found with id " + id));
-        inventory.setStockLevel(inventoryDetails.getStockLevel());
-        inventory.setReorderThreshold(inventoryDetails.getReorderThreshold());
-        inventory.setProduct(inventoryDetails.getProduct());
-        inventory.setStore(inventoryDetails.getStore());
-        return inventoryRepository.save(inventory);
+        Inventory existingInventory = inventoryService.getInventoryById(id);
+        return inventoryService.updateInventory(existingInventory, inventoryDetails);
     }
 
+    // Delete an inventory record
     @DeleteMapping("/{id}")
     public String deleteInventory(@PathVariable Integer id) {
-        Inventory inventory = inventoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Inventory not found with id " + id));
-        inventoryRepository.delete(inventory);
+        Inventory inventory = inventoryService.getInventoryById(id);
+        inventoryService.deleteInventory(inventory);
         return "Inventory with id " + id + " has been deleted.";
     }
 }

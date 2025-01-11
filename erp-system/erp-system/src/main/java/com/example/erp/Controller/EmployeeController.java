@@ -26,7 +26,7 @@ public class EmployeeController {
                         employee.getName(),
                         employee.getRole(),
                         employee.getSalary(),
-                        employee.getHireDate().toString(),
+                        employee.getHireDate(), // No .toString(), use LocalDate directly
                         employee.getDepartment() != null ? employee.getDepartment().getDepartmentName() : null,
                         employee.getStore() != null ? employee.getStore().getStoreName() : null
                 ))
@@ -42,7 +42,7 @@ public class EmployeeController {
                 employee.getName(),
                 employee.getRole(),
                 employee.getSalary(),
-                employee.getHireDate().toString(),
+                employee.getHireDate(), // Use LocalDate directly
                 employee.getDepartment() != null ? employee.getDepartment().getDepartmentName() : null,
                 employee.getStore() != null ? employee.getStore().getStoreName() : null
         );

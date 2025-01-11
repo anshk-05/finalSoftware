@@ -1,44 +1,63 @@
-package com.example.erp.controller;
+package com.example.erp.Controller;
 
+import com.example.erp.DTO.DepartmentDTO;
 import com.example.erp.Model.Department;
-import com.example.erp.Repository.DepartmentRepository;
+import com.example.erp.Service.DepartmentService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/departments")
 public class DepartmentController {
-    private final DepartmentRepository departmentRepository;
+    private final DepartmentService departmentService;
 
-    public DepartmentController(DepartmentRepository departmentRepository) {
-        this.departmentRepository = departmentRepository;
+    public DepartmentController(DepartmentService departmentService) {
+        this.departmentService = departmentService;
     }
 
+    // Get all departments
     @GetMapping
-    public List<Department> getAllDepartments() {
-        return departmentRepository.findAll();
+    public List<DepartmentDTO> getAllDepartments() {
+        return departmentService.getAllDepartments().stream()
+                .map(department -> new DepartmentDTO(
+                        department.getDepartmentId(),
+                        department.getDepartmentName(),
+                        department.getBudget()
+                ))
+                .collect(Collectors.toList());
     }
 
+    // Get a single department
+    @GetMapping("/{id}")
+    public DepartmentDTO getDepartmentById(@PathVariable Integer id) {
+        Department department = departmentService.getDepartmentById(id);
+        return new DepartmentDTO(
+                department.getDepartmentId(),
+                department.getDepartmentName(),
+                department.getBudget()
+        );
+    }
+
+    // Create a new department
     @PostMapping
     public Department createDepartment(@RequestBody Department department) {
-        return departmentRepository.save(department);
+        return departmentService.createDepartment(department);
     }
 
+    // Update a department
     @PutMapping("/{id}")
     public Department updateDepartment(@PathVariable Integer id, @RequestBody Department departmentDetails) {
-        Department department = departmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Department not found with id " + id));
-        department.setDepartmentName(departmentDetails.getDepartmentName());
-        department.setBudget(departmentDetails.getBudget());
-        return departmentRepository.save(department);
+        Department existingDepartment = departmentService.getDepartmentById(id);
+        return departmentService.updateDepartment(existingDepartment, departmentDetails);
     }
 
+    // Delete a department
     @DeleteMapping("/{id}")
     public String deleteDepartment(@PathVariable Integer id) {
-        Department department = departmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Department not found with id " + id));
-        departmentRepository.delete(department);
+        Department department = departmentService.getDepartmentById(id);
+        departmentService.deleteDepartment(department);
         return "Department with id " + id + " has been deleted.";
     }
 }

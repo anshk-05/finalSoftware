@@ -1,18 +1,20 @@
 package com.example.erp.DTO;
 
+import java.time.LocalDate;
+
 public class EmployeeDTO {
     private Integer employeeId;
     private String name;
     private String role;
     private Double salary;
-    private String hireDate;
+    private LocalDate hireDate;
     private String departmentName; // From linked Department
     private String storeName; // From linked Store
 
     // Constructors
     public EmployeeDTO() {}
 
-    public EmployeeDTO(Integer employeeId, String name, String role, Double salary, String hireDate, String departmentName, String storeName) {
+    public EmployeeDTO(Integer employeeId, String name, String role, Double salary, LocalDate hireDate, String departmentName, String storeName) {
         this.employeeId = employeeId;
         this.name = name;
         this.role = role;
@@ -55,11 +57,11 @@ public class EmployeeDTO {
         this.salary = salary;
     }
 
-    public String getHireDate() {
+    public LocalDate getHireDate() {
         return hireDate;
     }
 
-    public void setHireDate(String hireDate) {
+    public void setHireDate(LocalDate hireDate) {
         this.hireDate = hireDate;
     }
 

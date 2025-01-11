@@ -28,13 +28,14 @@ public class Employee {
     // Constructors
     public Employee() {}
 
-    public Employee(Integer employeeId, String name, String role, Double salary, LocalDate hireDate, Store store) {
+    public Employee(Integer employeeId, String name, String role, Double salary, LocalDate hireDate, Store store, Department department) {
         this.employeeId = employeeId;
         this.name = name;
         this.role = role;
         this.salary = salary;
         this.hireDate = hireDate;
         this.store = store;
+        this.department = department;
     }
 
     // Getters and Setters

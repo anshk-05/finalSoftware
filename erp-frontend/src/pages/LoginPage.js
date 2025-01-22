@@ -8,28 +8,42 @@ const LoginPage = () => {
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
+        console.log("Attempting login with:", { username, password }); // Log input data
+        try {
+            const response = await axios.post("http://localhost:8080/auth/login", {
+                username,
+                password,
+            });
+            console.log("Response from backend:", response.data); // Log backend response
+            const { token, role } = response.data;
     
-        // Mock role assignment based on username
-        if (username === "store_manager") {
-            navigate("/store-manager-dashboard");
-        } else if (username === "admin") {
-            navigate("/admin-dashboard");
-        } else if (username === "manager") {
-            navigate("/manager-dashboard");
-        } else if (username === "employee") {
-            navigate("/employee-dashboard");
-        } else {
-            setError("Invalid username. Try 'store_manager', 'admin', etc.");
+            sessionStorage.setItem("token", token);
+            sessionStorage.setItem("role", role);
+    
+            switch (role) {
+                case "Store Manager":
+                    navigate("/store-manager");
+                    break;
+                case "HR Manager":
+                    navigate("/hr-manager");
+                    break;
+                // Add other roles here
+                default:
+                    setError("No dashboard available for this role.");
+            }
+        } catch (err) {
+            console.error("Error:", err); // Log error
+            setError("Invalid username or password.");
         }
     };
-    
     
 
     return (
         <div style={{ textAlign: "center", marginTop: "50px" }}>
-            <h1>Login</h1>
+            <h2>Login to ERP System</h2>
+            {error && <p style={{ color: "red" }}>{error}</p>}
             <form onSubmit={handleLogin}>
                 <div>
                     <input
@@ -46,12 +60,11 @@ const LoginPage = () => {
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                     />
                 </div>
                 <button type="submit">Login</button>
             </form>
-
-            {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
     );
 };

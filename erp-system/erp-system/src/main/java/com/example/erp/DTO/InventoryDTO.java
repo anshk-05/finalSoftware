@@ -2,24 +2,18 @@ package com.example.erp.DTO;
 
 public class InventoryDTO {
     private Integer inventoryId;
-    private Integer productId;
     private String productName;
-    private Integer storeId;
-    private String storeName;
     private Integer stockLevel;
-    private Integer reorderThreshold;
+    private Double price;
+    private String category;
 
-    // Constructors
-    public InventoryDTO() {}
-
-    public InventoryDTO(Integer inventoryId, Integer productId, String productName, Integer storeId, String storeName, Integer stockLevel, Integer reorderThreshold) {
+    // Constructor
+    public InventoryDTO(Integer inventoryId, String productName, Integer stockLevel, Double price, String category) {
         this.inventoryId = inventoryId;
-        this.productId = productId;
         this.productName = productName;
-        this.storeId = storeId;
-        this.storeName = storeName;
         this.stockLevel = stockLevel;
-        this.reorderThreshold = reorderThreshold;
+        this.price = price;
+        this.category = category;
     }
 
     // Getters and Setters
@@ -31,36 +25,12 @@ public class InventoryDTO {
         this.inventoryId = inventoryId;
     }
 
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }
-
     public String getProductName() {
         return productName;
     }
 
     public void setProductName(String productName) {
         this.productName = productName;
-    }
-
-    public Integer getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(Integer storeId) {
-        this.storeId = storeId;
-    }
-
-    public String getStoreName() {
-        return storeName;
-    }
-
-    public void setStoreName(String storeName) {
-        this.storeName = storeName;
     }
 
     public Integer getStockLevel() {
@@ -71,11 +41,19 @@ public class InventoryDTO {
         this.stockLevel = stockLevel;
     }
 
-    public Integer getReorderThreshold() {
-        return reorderThreshold;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setReorderThreshold(Integer reorderThreshold) {
-        this.reorderThreshold = reorderThreshold;
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

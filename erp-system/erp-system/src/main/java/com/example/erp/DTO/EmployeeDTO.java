@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class EmployeeDTO {
     private Integer employeeId;
     private String name;
-    private String role;
+    private String roleName; // Replace `role` with `roleName`
     private Double salary;
     private LocalDate hireDate;
     private String departmentName; // From linked Department
@@ -14,10 +14,10 @@ public class EmployeeDTO {
     // Constructors
     public EmployeeDTO() {}
 
-    public EmployeeDTO(Integer employeeId, String name, String role, Double salary, LocalDate hireDate, String departmentName, String storeName) {
+    public EmployeeDTO(Integer employeeId, String name, String roleName, Double salary, LocalDate hireDate, String departmentName, String storeName) {
         this.employeeId = employeeId;
         this.name = name;
-        this.role = role;
+        this.roleName = roleName;
         this.salary = salary;
         this.hireDate = hireDate;
         this.departmentName = departmentName;
@@ -41,12 +41,12 @@ public class EmployeeDTO {
         this.name = name;
     }
 
-    public String getRole() {
-        return role;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
     public Double getSalary() {

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
@@ -24,11 +25,11 @@ public class EmployeeController {
                 .map(employee -> new EmployeeDTO(
                         employee.getEmployeeId(),
                         employee.getName(),
-                        employee.getRole(),
+                        employee.getRole().getRoleName(), // Use Role entity
                         employee.getSalary(),
-                        employee.getHireDate(), // No .toString(), use LocalDate directly
-                        employee.getDepartment() != null ? employee.getDepartment().getDepartmentName() : null,
-                        employee.getStore() != null ? employee.getStore().getStoreName() : null
+                        employee.getHireDate(),
+                        employee.getDepartment().getDepartmentName(),
+                        employee.getStore().getStoreName()
                 ))
                 .collect(Collectors.toList());
     }
@@ -40,11 +41,11 @@ public class EmployeeController {
         return new EmployeeDTO(
                 employee.getEmployeeId(),
                 employee.getName(),
-                employee.getRole(),
+                employee.getRole().getRoleName(),
                 employee.getSalary(),
-                employee.getHireDate(), // Use LocalDate directly
-                employee.getDepartment() != null ? employee.getDepartment().getDepartmentName() : null,
-                employee.getStore() != null ? employee.getStore().getStoreName() : null
+                employee.getHireDate(),
+                employee.getDepartment().getDepartmentName(),
+                employee.getStore().getStoreName()
         );
     }
 
@@ -57,15 +58,13 @@ public class EmployeeController {
     // Update an employee
     @PutMapping("/{id}")
     public Employee updateEmployee(@PathVariable Integer id, @RequestBody Employee employeeDetails) {
-        Employee existingEmployee = employeeService.getEmployeeById(id);
-        return employeeService.updateEmployee(existingEmployee, employeeDetails);
+        return employeeService.updateEmployee(id, employeeDetails);
     }
 
     // Delete an employee
     @DeleteMapping("/{id}")
     public String deleteEmployee(@PathVariable Integer id) {
-        Employee employee = employeeService.getEmployeeById(id);
-        employeeService.deleteEmployee(employee);
+        employeeService.deleteEmployee(id);
         return "Employee with id " + id + " has been deleted.";
     }
 }

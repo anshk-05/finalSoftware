@@ -1,5 +1,6 @@
 package com.example.erp.Service;
 
+import com.example.erp.DTO.InventoryDTO;
 import com.example.erp.Model.Inventory;
 import com.example.erp.Repository.InventoryRepository;
 import com.example.erp.Service.ProductService;
@@ -18,6 +19,11 @@ public class InventoryService {
         this.inventoryRepository = inventoryRepository;
         this.productService = productService;
         this.storeService = storeService;
+    }
+
+    // Get all inventory records (with product details)
+    public List<InventoryDTO> getInventoryWithProductDetails() {
+        return inventoryRepository.getInventoryWithProductDetails();
     }
 
     // Get all inventory records

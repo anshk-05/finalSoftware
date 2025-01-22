@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/inventory")
 public class InventoryController {
@@ -17,20 +18,10 @@ public class InventoryController {
         this.inventoryService = inventoryService;
     }
 
-    // Get all inventory records
+    // Get all inventory records (with product details)
     @GetMapping
     public List<InventoryDTO> getAllInventory() {
-        return inventoryService.getAllInventory().stream()
-                .map(inventory -> new InventoryDTO(
-                        inventory.getInventoryId(),
-                        inventory.getProduct().getProductId(),
-                        inventory.getProduct().getProductName(),
-                        inventory.getStore() != null ? inventory.getStore().getStoreId() : null,
-                        inventory.getStore() != null ? inventory.getStore().getStoreName() : null,
-                        inventory.getStockLevel(),
-                        inventory.getReorderThreshold()
-                ))
-                .collect(Collectors.toList());
+        return inventoryService.getInventoryWithProductDetails();
     }
 
     // Get a single inventory record
@@ -39,12 +30,10 @@ public class InventoryController {
         Inventory inventory = inventoryService.getInventoryById(id);
         return new InventoryDTO(
                 inventory.getInventoryId(),
-                inventory.getProduct().getProductId(),
                 inventory.getProduct().getProductName(),
-                inventory.getStore() != null ? inventory.getStore().getStoreId() : null,
-                inventory.getStore() != null ? inventory.getStore().getStoreName() : null,
                 inventory.getStockLevel(),
-                inventory.getReorderThreshold()
+                inventory.getProduct().getPrice(),
+                inventory.getProduct().getCategory()
         );
     }
 

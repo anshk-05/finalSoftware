@@ -1,8 +1,6 @@
 package com.example.erp.Model;
 
-import com.example.erp.Model.Store;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
@@ -12,30 +10,33 @@ public class Employee {
     private Integer employeeId;
 
     private String name;
-    private String role;
     private Double salary;
     private LocalDate hireDate;
+    private String password;
 
     @ManyToOne
     @JoinColumn(name = "store_id", nullable = false)
-    private Store store; // Many employees belong to one store
+    private Store store;
 
     @ManyToOne
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
 
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role; // New relationship
 
     // Constructors
     public Employee() {}
 
-    public Employee(Integer employeeId, String name, String role, Double salary, LocalDate hireDate, Store store, Department department) {
+    public Employee(Integer employeeId, String name, Double salary, LocalDate hireDate, Store store, Department department, Role role) {
         this.employeeId = employeeId;
         this.name = name;
-        this.role = role;
         this.salary = salary;
         this.hireDate = hireDate;
         this.store = store;
         this.department = department;
+        this.role = role;
     }
 
     // Getters and Setters
@@ -53,14 +54,6 @@ public class Employee {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public Double getSalary() {
@@ -93,5 +86,21 @@ public class Employee {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

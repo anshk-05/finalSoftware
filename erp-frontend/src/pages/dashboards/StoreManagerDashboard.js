@@ -6,11 +6,15 @@ const StoreManagerDashboard = () => {
     const [sales, setSales] = useState([]);
     const [error, setError] = useState("");
 
-    // Fetch inventory data
+    // Fetch inventory and sales data on component mount
+    useEffect(() => {
+        fetchInventory();
+        fetchSales();
+    }, []);
+
     const fetchInventory = async () => {
         try {
             const response = await axios.get("http://localhost:8080/inventory");
-            console.log(response.data); // Log the API response
             setInventory(response.data);
         } catch (error) {
             console.error("Error fetching inventory:", error);
@@ -18,22 +22,16 @@ const StoreManagerDashboard = () => {
         }
     };
 
-    // Fetch sales data
     const fetchSales = async () => {
         try {
             const response = await axios.get("http://localhost:8080/sales");
-            setSales(response.data);
-        } catch (err) {
-            console.error("Error fetching sales data:", err);
+            const sortedSales = response.data.sort((a, b) => a.salesId - b.salesId);
+            setSales(sortedSales);
+        } catch (error) {
+            console.error("Error fetching sales:", error);
             setError("Failed to fetch sales data.");
         }
     };
-
-    // Fetch inventory and sales data on component mount
-    useEffect(() => {
-        fetchInventory();
-        fetchSales();
-    }, []);
 
     return (
         <div style={{ padding: "20px" }}>
@@ -54,14 +52,15 @@ const StoreManagerDashboard = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {inventory.map((item) => (
-                        <tr key={item.inventoryId}>
-                            <td>{item.inventoryId}</td>
-                            <td>{item.productName}</td>
-                            <td>{item.stockLevel}</td>
-                            <td>{item.price}</td>
-                            <td>{item.category}</td>
+                    {inventory.map((product) => (
+                        <tr key={product.inventoryId}>
+                            <td>{product.inventoryId}</td>
+                            <td>{product.productName}</td>
+                            <td>{product.stockLevel}</td>
+                            <td>{product.price}</td>
+                            <td>{product.category}</td>
                             <td>
+                                {/* Placeholder for future actions */}
                                 <button>Edit</button>
                                 <button>Update Quantity</button>
                             </td>
@@ -75,21 +74,31 @@ const StoreManagerDashboard = () => {
             <table border="1" style={{ width: "100%", marginBottom: "20px" }}>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Sales ID</th>
+                        <th>Product ID</th>
                         <th>Product Name</th>
-                        <th>Quantity Sold</th>
+                        <th>Quantity</th>
+                        <th>Price per Unit</th>
                         <th>Total Amount</th>
-                        <th>Sale Date</th>
+                        <th>Date of Sale</th>
+                        <th>Payment Method</th>
+                        <th>Store Name</th>
+                        <th>Employee Name</th>
                     </tr>
                 </thead>
                 <tbody>
                     {sales.map((sale) => (
-                        <tr key={sale.saleId}>
-                            <td>{sale.saleId}</td>
+                        <tr key={`${sale.salesId}-${sale.productId}`}>
+                            <td>{sale.salesId}</td>
+                            <td>{sale.productId}</td>
                             <td>{sale.productName}</td>
                             <td>{sale.quantity}</td>
+                            <td>{sale.pricePerUnit}</td>
                             <td>{sale.totalAmount}</td>
-                            <td>{sale.saleDate}</td>
+                            <td>{sale.dateOfSale}</td>
+                            <td>{sale.paymentMethod}</td>
+                            <td>{sale.storeName}</td>
+                            <td>{sale.employeeName}</td>
                         </tr>
                     ))}
                 </tbody>

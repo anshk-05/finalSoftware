@@ -21,4 +21,13 @@ public interface SalesRepository extends JpaRepository<Sales, Integer> {
             "ORDER BY s.dateOfSale DESC")
     List<SalesDTO> getSalesWithDetails();
 
+    @Query("SELECT SUM(s.totalAmount) FROM Sales s")
+    Double getTotalRevenue();
+
+    @Query("SELECT CAST(EXTRACT(MONTH FROM s.dateOfSale) AS integer) AS month, SUM(s.totalAmount) AS revenue " +
+            "FROM Sales s GROUP BY EXTRACT(MONTH FROM s.dateOfSale) ORDER BY month")
+    List<Object[]> getSalesTrends();
+
+
+
 }

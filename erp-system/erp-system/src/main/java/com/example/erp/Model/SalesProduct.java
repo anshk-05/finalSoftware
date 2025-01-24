@@ -31,6 +31,14 @@ public class SalesProduct {
         this.pricePerUnit = pricePerUnit;
     }
 
+    // Constructor matching the service layer
+    public SalesProduct(Sales sales, Product product, Integer quantity, Double pricePerUnit) {
+        this.sales = sales;
+        this.product = product;
+        this.quantity = quantity;
+        this.pricePerUnit = pricePerUnit;
+    }
+
     public Integer getSalesProductId() { return salesProductId; }
     public void setSalesProductId(Integer salesProductId) { this.salesProductId = salesProductId; }
 

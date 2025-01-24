@@ -10,6 +10,7 @@ import com.example.erp.Repository.PurchaseOrderRepository;
 import com.example.erp.Repository.PurchaseOrderProductRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -122,5 +123,14 @@ public class PurchaseOrderService {
     public void deletePurchaseOrder(PurchaseOrder purchaseOrder) {
         purchaseOrderProductRepository.deleteAll(purchaseOrder.getProducts());
         purchaseOrderRepository.delete(purchaseOrder);
+    }
+
+    public void createReorder(Product product) {
+        PurchaseOrder purchaseOrder = new PurchaseOrder();
+        purchaseOrder.setOrderDate(LocalDate.now());
+        purchaseOrder.setTotalAmount(product.getReorderLevel() * product.getPrice());
+        purchaseOrder.setSupplier(product.getSupplier());
+        purchaseOrder.setOrderStatus("Pending");
+        purchaseOrderRepository.save(purchaseOrder);
     }
 }

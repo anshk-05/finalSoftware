@@ -8,6 +8,7 @@ import ProcurementDashboard from "./pages/dashboards/ProcurementDashboard.js";
 import WarehouseManagerDashboard from "./pages/dashboards/WarehouseManagerDashboard";
 import ExecutiveDashboard from "./pages/dashboards/ExecutiveDashboard";
 import ITAdminDashboard from "./pages/dashboards/ITAdminDashboard";
+import SalesDashboard from "./pages/dashboards/SalesDashboard.js";
 
 const App = () => {
     return (
@@ -21,6 +22,7 @@ const App = () => {
                 <Route path="/warehouse" element={<WarehouseManagerDashboard />} />
                 <Route path="/executive" element={<ExecutiveDashboard />} />
                 <Route path="/it-admin" element={<ITAdminDashboard />} />
+                <Route path="/sales" element={<SalesDashboard />} />
             </Routes>
         </Router>
     );

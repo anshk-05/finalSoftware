@@ -12,14 +12,14 @@ public interface SalesRepository extends JpaRepository<Sales, Integer> {
     @Query("SELECT new com.example.erp.DTO.SalesDTO(" +
             "s.salesId, s.dateOfSale, s.totalAmount, s.paymentMethod, " +
             "st.storeName, e.name, " +
-            "p.productId, p.productName, sp.quantity, sp.pricePerUnit) " +
+            "sp.product.productId, sp.product.productName, sp.quantity, sp.pricePerUnit) " +
             "FROM Sales s " +
             "JOIN s.store st " +
             "JOIN s.employee e " +
             "JOIN s.salesProducts sp " +
-            "JOIN sp.product p " +
             "ORDER BY s.dateOfSale DESC")
     List<SalesDTO> getSalesWithDetails();
+
 
     @Query("SELECT SUM(s.totalAmount) FROM Sales s")
     Double getTotalRevenue();

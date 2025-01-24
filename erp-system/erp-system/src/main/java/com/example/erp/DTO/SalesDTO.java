@@ -1,6 +1,7 @@
 package com.example.erp.DTO;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SalesDTO {
@@ -13,11 +14,14 @@ public class SalesDTO {
     private Integer employeeId; // ID of the employee (used for service methods)
     private String employeeName; // Name of the employee (used for repository query)
     private List<SalesProductDTO> products; // List of products sold in this sale
+    private String productName; // Name of the product (used in queries with products)
 
     // Default Constructor
-    public SalesDTO() {}
+    public SalesDTO() {
+        this.products = new ArrayList<>(); // Initialize to avoid null issues
+    }
 
-    // Constructor for repository query (detailed data)
+    // Constructor for repository query (detailed data, including product info)
     public SalesDTO(
             Integer salesId,
             LocalDate dateOfSale,
@@ -36,10 +40,11 @@ public class SalesDTO {
         this.paymentMethod = paymentMethod;
         this.storeName = storeName;
         this.employeeName = employeeName;
-        this.products = List.of(new SalesProductDTO(productId, salesId, quantity, pricePerUnit));
+        this.productName = productName; // Added product name
+        this.products = List.of(new SalesProductDTO(productId, productName, quantity, pricePerUnit));
     }
 
-    // Constructor for service methods (minimal data)
+    // Constructor for service methods (minimal data, multiple products)
     public SalesDTO(
             Integer salesId,
             LocalDate dateOfSale,
@@ -129,5 +134,21 @@ public class SalesDTO {
 
     public void setProducts(List<SalesProductDTO> products) {
         this.products = products;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    // Utility method to add a product
+    public void addProduct(SalesProductDTO product) {
+        if (this.products == null) {
+            this.products = new ArrayList<>();
+        }
+        this.products.add(product);
     }
 }

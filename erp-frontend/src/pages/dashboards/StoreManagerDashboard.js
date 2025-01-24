@@ -14,7 +14,7 @@ const StoreManagerDashboard = () => {
 
     const fetchInventory = async () => {
         try {
-            const response = await axios.get("http://localhost:8080/inventory");
+            const response = await axios.get("http://localhost:8080/products");
             setInventory(response.data);
         } catch (error) {
             console.error("Error fetching inventory:", error);
@@ -53,14 +53,13 @@ const StoreManagerDashboard = () => {
                 </thead>
                 <tbody>
                     {inventory.map((product) => (
-                        <tr key={product.inventoryId}>
-                            <td>{product.inventoryId}</td>
+                        <tr key={product.productId}>
+                            <td>{product.productId}</td>
                             <td>{product.productName}</td>
                             <td>{product.stockLevel}</td>
                             <td>{product.price}</td>
                             <td>{product.category}</td>
                             <td>
-                                {/* Placeholder for future actions */}
                                 <button>Edit</button>
                                 <button>Update Quantity</button>
                             </td>
@@ -87,20 +86,22 @@ const StoreManagerDashboard = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {sales.map((sale) => (
-                        <tr key={`${sale.salesId}-${sale.productId}`}>
-                            <td>{sale.salesId}</td>
-                            <td>{sale.productId}</td>
-                            <td>{sale.productName}</td>
-                            <td>{sale.quantity}</td>
-                            <td>{sale.pricePerUnit}</td>
-                            <td>{sale.totalAmount}</td>
-                            <td>{sale.dateOfSale}</td>
-                            <td>{sale.paymentMethod}</td>
-                            <td>{sale.storeName}</td>
-                            <td>{sale.employeeName}</td>
-                        </tr>
-                    ))}
+                    {sales.map((sale) =>
+                        sale.products.map((product) => (
+                            <tr key={`${sale.salesId}-${product.productId}`}>
+                                <td>{sale.salesId}</td>
+                                <td>{product.productId}</td>
+                                <td>{product.productName}</td>
+                                <td>{product.quantity}</td>
+                                <td>{product.pricePerUnit}</td>
+                                <td>{sale.totalAmount}</td>
+                                <td>{sale.dateOfSale}</td>
+                                <td>{sale.paymentMethod}</td>
+                                <td>{sale.storeName}</td>
+                                <td>{sale.employeeName}</td>
+                            </tr>
+                        ))
+                    )}
                 </tbody>
             </table>
         </div>

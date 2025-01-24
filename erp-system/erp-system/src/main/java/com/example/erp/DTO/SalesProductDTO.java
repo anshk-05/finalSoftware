@@ -2,6 +2,7 @@ package com.example.erp.DTO;
 
 public class SalesProductDTO {
     private Integer productId; // ID of the product
+    private String productName; // Name of the product
     private Integer salesId;   // ID of the sales (optional for the backend to set later)
     private Integer quantity;  // Quantity sold
     private Double pricePerUnit; // Price per unit of the product
@@ -9,10 +10,18 @@ public class SalesProductDTO {
     // Default Constructor
     public SalesProductDTO() {}
 
-    // Parameterized Constructor
+    // Parameterized Constructor without productName
     public SalesProductDTO(Integer productId, Integer salesId, Integer quantity, Double pricePerUnit) {
         this.productId = productId;
         this.salesId = salesId;
+        this.quantity = quantity;
+        this.pricePerUnit = pricePerUnit;
+    }
+
+    // Parameterized Constructor with productName
+    public SalesProductDTO(Integer productId, String productName, Integer quantity, Double pricePerUnit) {
+        this.productId = productId;
+        this.productName = productName;
         this.quantity = quantity;
         this.pricePerUnit = pricePerUnit;
     }
@@ -24,6 +33,14 @@ public class SalesProductDTO {
 
     public void setProductId(Integer productId) {
         this.productId = productId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public Integer getSalesId() {

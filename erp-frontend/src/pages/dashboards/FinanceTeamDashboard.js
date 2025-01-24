@@ -66,31 +66,31 @@ const FinanceTeamDashboard = () => {
     };
 
     return (
-        <div style={{ padding: "20px" }}>
-            <h1>Finance Team Dashboard</h1>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+        <div className="p-5">
+            <h1 className="text-3xl font-bold mb-5">Finance Team Dashboard</h1>
+            {error && <p className="text-red-500 mb-4">{error}</p>}
 
             {/* Revenue Overview */}
-            <div style={{ marginBottom: "20px" }}>
-                <h2>Revenue Overview</h2>
-                <p>Total Revenue: ${revenue.toFixed(2)}</p>
+            <div className="mb-6 p-4 bg-white shadow rounded-lg">
+                <h2 className="text-2xl font-semibold mb-2">Revenue Overview</h2>
+                <p className="text-lg">Total Revenue: ${revenue.toFixed(2)}</p>
             </div>
 
             {/* Expenses Overview */}
-            <div style={{ marginBottom: "20px" }}>
-                <h2>Expenses Overview</h2>
-                <p>Total Expenses: ${expenses.toFixed(2)}</p>
+            <div className="mb-6 p-4 bg-white shadow rounded-lg">
+                <h2 className="text-2xl font-semibold mb-2">Expenses Overview</h2>
+                <p className="text-lg">Total Expenses: ${expenses.toFixed(2)}</p>
             </div>
 
             {/* Profit Overview */}
-            <div style={{ marginBottom: "20px" }}>
-                <h2>Profit</h2>
-                <p>Current Profit: ${profit.toFixed(2)}</p>
+            <div className="mb-6 p-4 bg-white shadow rounded-lg">
+                <h2 className="text-2xl font-semibold mb-2">Profit</h2>
+                <p className="text-lg">Current Profit: ${profit.toFixed(2)}</p>
             </div>
 
             {/* Sales Trends */}
-            <div style={{ marginBottom: "20px" }}>
-                <h2>Sales Trends</h2>
+            <div className="mb-6 p-4 bg-white shadow rounded-lg">
+                <h2 className="text-2xl font-semibold mb-4">Sales Trends</h2>
                 {salesTrends.length > 0 ? (
                     <Bar
                         data={{
@@ -127,7 +127,7 @@ const FinanceTeamDashboard = () => {
                         }}
                     />
                 ) : (
-                    <p>No sales trends data available.</p>
+                    <p className="text-gray-500">No sales trends data available.</p>
                 )}
             </div>
         </div>

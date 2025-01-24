@@ -17,16 +17,21 @@ const SalesDashboard = () => {
         // Fetch products
         axios.get("http://localhost:8080/products")
             .then((response) => setProducts(response.data))
-            .catch((error) => console.error("Error fetching products:", error));
+            .catch((error) => setErrorMessage("Failed to fetch products."));
 
         // Fetch sales history
         axios.get("http://localhost:8080/sales")
             .then((response) => setSalesHistory(response.data))
-            .catch((error) => console.error("Error fetching sales history:", error));
+            .catch((error) => setErrorMessage("Failed to fetch sales history."));
     }, []);
 
     // Handle adding a product to the sale
     const addProductToSale = (product) => {
+        if (product.stockLevel <= 0) {
+            setErrorMessage(`Product ${product.productName} is out of stock.`);
+            return;
+        }
+
         const existingProduct = selectedProducts.find((p) => p.productId === product.productId);
         if (existingProduct) {
             setSelectedProducts((prev) =>
@@ -39,6 +44,7 @@ const SalesDashboard = () => {
         } else {
             setSelectedProducts((prev) => [...prev, { ...product, quantity: 1 }]);
         }
+        setErrorMessage("");
     };
 
     // Handle submitting the sale
@@ -64,15 +70,14 @@ const SalesDashboard = () => {
 
         // Send the sale payload to the backend
         try {
-            const response = await axios.post("http://localhost:8080/sales", salePayload);
+            await axios.post("http://localhost:8080/sales", salePayload);
             setSuccessMessage("Sale created successfully!");
             setErrorMessage("");
-            console.log("Response:", response.data);
 
             // Refresh sales history
             axios.get("http://localhost:8080/sales")
                 .then((response) => setSalesHistory(response.data))
-                .catch((error) => console.error("Error fetching sales history:", error));
+                .catch(() => setErrorMessage("Failed to refresh sales history."));
 
             // Reset form
             setSelectedProducts([]);
@@ -80,100 +85,119 @@ const SalesDashboard = () => {
             setStoreId("");
             setEmployeeId("");
         } catch (error) {
-            console.error("Error creating sale:", error);
-            setErrorMessage("Failed to create sale. Please check your input.");
+            setErrorMessage("Failed to create sale. Please try again.");
             setSuccessMessage("");
         }
     };
 
     return (
-        <div style={{ padding: "20px" }}>
-            <h1>Sales Dashboard</h1>
-            {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-            {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
+        <div className="p-6">
+            <h1 className="text-3xl font-semibold mb-4">Sales Dashboard</h1>
+            {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+            {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
 
-            <h2>Available Products</h2>
-            <table border="1" style={{ width: "100%", textAlign: "center" }}>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">Available Products</h2>
+            <table className="w-full table-auto border-collapse mb-6">
                 <thead>
-                    <tr>
-                        <th>Product Name</th>
-                        <th>Price</th>
-                        <th>Stock Level</th>
-                        <th>Actions</th>
+                    <tr className="bg-gray-100">
+                        <th className="py-2 px-4 border-b">Product Name</th>
+                        <th className="py-2 px-4 border-b">Price</th>
+                        <th className="py-2 px-4 border-b">Stock Level</th>
+                        <th className="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {products.map((product) => (
-                        <tr key={product.productId}>
-                            <td>{product.productName}</td>
-                            <td>{product.price}</td>
-                            <td>{product.stockLevel}</td>
-                            <td>
-                                <button onClick={() => addProductToSale(product)}>Add to Sale</button>
+                        <tr key={product.productId} className="hover:bg-gray-50">
+                            <td className="py-2 px-4 border-b">{product.productName}</td>
+                            <td className="py-2 px-4 border-b">${product.price.toFixed(2)}</td>
+                            <td className="py-2 px-4 border-b">{product.stockLevel}</td>
+                            <td className="py-2 px-4 border-b">
+                                <button
+                                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                                    onClick={() => addProductToSale(product)}
+                                >
+                                    Add to Sale
+                                </button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
 
-            <h2>Create a Sale</h2>
-            <div>
-                <label>Store ID:</label>
-                <input
-                    type="text"
-                    value={storeId}
-                    onChange={(e) => setStoreId(e.target.value)}
-                />
-            </div>
-            <div>
-                <label>Employee ID:</label>
-                <input
-                    type="text"
-                    value={employeeId}
-                    onChange={(e) => setEmployeeId(e.target.value)}
-                />
-            </div>
-            <div>
-                <label>Payment Method:</label>
-                <select
-                    value={paymentMethod}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                >
-                    <option value="">Select</option>
-                    <option value="Credit Card">Credit Card</option>
-                    <option value="Debit Card">Debit Card</option>
-                    <option value="Cash">Cash</option>
-                </select>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">Create a Sale</h2>
+            <div className="space-y-4">
+                <div>
+                    <label className="block text-sm font-medium">Store ID:</label>
+                    <input
+                        type="text"
+                        value={storeId}
+                        onChange={(e) => setStoreId(e.target.value)}
+                        className="mt-1 p-2 border border-gray-300 rounded w-full"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium">Employee ID:</label>
+                    <input
+                        type="text"
+                        value={employeeId}
+                        onChange={(e) => setEmployeeId(e.target.value)}
+                        className="mt-1 p-2 border border-gray-300 rounded w-full"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium">Payment Method:</label>
+                    <select
+                        value={paymentMethod}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        className="mt-1 p-2 border border-gray-300 rounded w-full"
+                    >
+                        <option value="">Select</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Debit Card">Debit Card</option>
+                        <option value="Cash">Cash</option>
+                    </select>
+                </div>
             </div>
 
-            <h3>Products in Sale</h3>
-            <ul>
-                {selectedProducts.map((product) => (
-                    <li key={product.productId}>
-                        Product ID: {product.productId}, Quantity: {product.quantity}, Price Per Unit: {product.price}
-                    </li>
-                ))}
-            </ul>
+            <h3 className="text-xl font-semibold mt-8">Products in Sale</h3>
+            {selectedProducts.length > 0 ? (
+                <ul className="space-y-2">
+                    {selectedProducts.map((product) => (
+                        <li key={product.productId} className="flex justify-between">
+                            <span>{product.productName} - Quantity: {product.quantity}</span>
+                            <span>${(product.price * product.quantity).toFixed(2)}</span>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No products added to the sale yet.</p>
+            )}
 
-            <button onClick={submitSale}>Submit Sale</button>
+            <button
+                onClick={submitSale}
+                className="mt-4 px-6 py-2 bg-green-500 text-white rounded hover:bg-green-700"
+            >
+                Submit Sale
+            </button>
 
-            <h2>Sales History</h2>
-            <table border="1" style={{ width: "100%", textAlign: "center" }}>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">Sales History</h2>
+            <table className="w-full table-auto border-collapse">
                 <thead>
-                    <tr>
-                        <th>Sale ID</th>
-                        <th>Date</th>
-                        <th>Total Amount</th>
-                        <th>Payment Method</th>
+                    <tr className="bg-gray-100">
+                        <th className="py-2 px-4 border-b">Sale ID</th>
+                        <th className="py-2 px-4 border-b">Date</th>
+                        <th className="py-2 px-4 border-b">Total Amount</th>
+                        <th className="py-2 px-4 border-b">Payment Method</th>
                     </tr>
                 </thead>
                 <tbody>
                     {salesHistory.map((sale) => (
-                        <tr key={sale.salesId}>
-                            <td>{sale.salesId}</td>
-                            <td>{sale.dateOfSale}</td>
-                            <td>{sale.totalAmount}</td>
-                            <td>{sale.paymentMethod}</td>
+                        <tr key={sale.salesId} className="hover:bg-gray-50">
+                            <td className="py-2 px-4 border-b">{sale.salesId}</td>
+                            <td className="py-2 px-4 border-b">{sale.dateOfSale}</td>
+                            <td className="py-2 px-4 border-b">${sale.totalAmount.toFixed(2)}</td>
+                            <td className="py-2 px-4 border-b">{sale.paymentMethod}</td>
                         </tr>
                     ))}
                 </tbody>

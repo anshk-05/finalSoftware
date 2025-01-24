@@ -34,76 +34,84 @@ const StoreManagerDashboard = () => {
     };
 
     return (
-        <div style={{ padding: "20px" }}>
-            <h1>Store Manager Dashboard</h1>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+        <div className="p-5">
+            <h1 className="text-3xl font-bold mb-5">Store Manager Dashboard</h1>
+            {error && <p className="text-red-500 mb-4">{error}</p>}
 
             {/* Inventory Section */}
-            <h2>Inventory</h2>
-            <table border="1" style={{ width: "100%", marginBottom: "20px" }}>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Product Name</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Category</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {inventory.map((product) => (
-                        <tr key={product.productId}>
-                            <td>{product.productId}</td>
-                            <td>{product.productName}</td>
-                            <td>{product.stockLevel}</td>
-                            <td>{product.price}</td>
-                            <td>{product.category}</td>
-                            <td>
-                                <button>Edit</button>
-                                <button>Update Quantity</button>
-                            </td>
+            <h2 className="text-2xl font-semibold mb-3">Inventory</h2>
+            <div className="overflow-x-auto mb-8">
+                <table className="table-auto w-full border-collapse border border-gray-300">
+                    <thead>
+                        <tr className="bg-gray-100">
+                            <th className="border border-gray-300 px-4 py-2 text-left">ID</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Product Name</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Quantity</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Price</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Category</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {inventory.map((product) => (
+                            <tr key={product.productId} className="hover:bg-gray-50">
+                                <td className="border border-gray-300 px-4 py-2">{product.productId}</td>
+                                <td className="border border-gray-300 px-4 py-2">{product.productName}</td>
+                                <td className="border border-gray-300 px-4 py-2">{product.stockLevel}</td>
+                                <td className="border border-gray-300 px-4 py-2">{product.price}</td>
+                                <td className="border border-gray-300 px-4 py-2">{product.category}</td>
+                                <td className="border border-gray-300 px-4 py-2">
+                                    <button className="bg-blue-500 text-white px-3 py-1 rounded mr-2 hover:bg-blue-600">
+                                        Edit
+                                    </button>
+                                    <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+                                        Update Quantity
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
             {/* Sales Section */}
-            <h2>Sales Data</h2>
-            <table border="1" style={{ width: "100%", marginBottom: "20px" }}>
-                <thead>
-                    <tr>
-                        <th>Sales ID</th>
-                        <th>Product ID</th>
-                        <th>Product Name</th>
-                        <th>Quantity</th>
-                        <th>Price per Unit</th>
-                        <th>Total Amount</th>
-                        <th>Date of Sale</th>
-                        <th>Payment Method</th>
-                        <th>Store Name</th>
-                        <th>Employee Name</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {sales.map((sale) =>
-                        sale.products.map((product) => (
-                            <tr key={`${sale.salesId}-${product.productId}`}>
-                                <td>{sale.salesId}</td>
-                                <td>{product.productId}</td>
-                                <td>{product.productName}</td>
-                                <td>{product.quantity}</td>
-                                <td>{product.pricePerUnit}</td>
-                                <td>{sale.totalAmount}</td>
-                                <td>{sale.dateOfSale}</td>
-                                <td>{sale.paymentMethod}</td>
-                                <td>{sale.storeName}</td>
-                                <td>{sale.employeeName}</td>
-                            </tr>
-                        ))
-                    )}
-                </tbody>
-            </table>
+            <h2 className="text-2xl font-semibold mb-3">Sales Data</h2>
+            <div className="overflow-x-auto">
+                <table className="table-auto w-full border-collapse border border-gray-300">
+                    <thead>
+                        <tr className="bg-gray-100">
+                            <th className="border border-gray-300 px-4 py-2 text-left">Sales ID</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Product ID</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Product Name</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Quantity</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Price per Unit</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Total Amount</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Date of Sale</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Payment Method</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Store Name</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Employee Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {sales.map((sale) =>
+                            sale.products.map((product) => (
+                                <tr key={`${sale.salesId}-${product.productId}`} className="hover:bg-gray-50">
+                                    <td className="border border-gray-300 px-4 py-2">{sale.salesId}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{product.productId}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{product.productName}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{product.quantity}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{product.pricePerUnit}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{sale.totalAmount}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{sale.dateOfSale}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{sale.paymentMethod}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{sale.storeName}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{sale.employeeName}</td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

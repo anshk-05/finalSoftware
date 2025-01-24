@@ -1,23 +1,31 @@
 package com.example.erp.DTO;
 
+import java.time.LocalDate;
+
 public class ProductDTO {
     private Integer productId;
     private String productName;
     private String category;
     private Double price;
     private Integer stockLevel;
-    private String storeName; // From the linked Store
-    private String supplierName; // From the linked Supplier
+    private Integer reorderLevel; // New field for reorder level
+    private LocalDate lastPurchaseDate; // New field for last purchase date
+    private String storeName; // Store name
+    private String supplierName; // Supplier name
 
-    // Constructors
+    // Default Constructor
     public ProductDTO() {}
 
-    public ProductDTO(Integer productId, String productName, String category, Double price, Integer stockLevel, String storeName, String supplierName) {
+    // Constructor
+    public ProductDTO(Integer productId, String productName, String category, Double price, Integer stockLevel,
+                      Integer reorderLevel, LocalDate lastPurchaseDate, String storeName, String supplierName) {
         this.productId = productId;
         this.productName = productName;
         this.category = category;
         this.price = price;
         this.stockLevel = stockLevel;
+        this.reorderLevel = reorderLevel;
+        this.lastPurchaseDate = lastPurchaseDate;
         this.storeName = storeName;
         this.supplierName = supplierName;
     }
@@ -61,6 +69,22 @@ public class ProductDTO {
 
     public void setStockLevel(Integer stockLevel) {
         this.stockLevel = stockLevel;
+    }
+
+    public Integer getReorderLevel() {
+        return reorderLevel;
+    }
+
+    public void setReorderLevel(Integer reorderLevel) {
+        this.reorderLevel = reorderLevel;
+    }
+
+    public LocalDate getLastPurchaseDate() {
+        return lastPurchaseDate;
+    }
+
+    public void setLastPurchaseDate(LocalDate lastPurchaseDate) {
+        this.lastPurchaseDate = lastPurchaseDate;
     }
 
     public String getStoreName() {

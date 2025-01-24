@@ -8,19 +8,23 @@ public class PurchaseOrderDTO {
     private LocalDate orderDate;
     private LocalDate deliveryDate;
     private Double totalAmount;
-    private String supplierName;
-    private List<String> productNames;
+    private String orderStatus; // New field for the order status
+    private String supplierName; // Supplier name
+    private List<PurchaseOrderProductDTO> products; // List of associated products
 
-    // Constructors
+    // Default Constructor
     public PurchaseOrderDTO() {}
 
-    public PurchaseOrderDTO(Integer purchaseOrderId, LocalDate orderDate, LocalDate deliveryDate, Double totalAmount, String supplierName, List<String> productNames) {
+    // Constructor
+    public PurchaseOrderDTO(Integer purchaseOrderId, LocalDate orderDate, LocalDate deliveryDate, Double totalAmount,
+                            String orderStatus, String supplierName, List<PurchaseOrderProductDTO> products) {
         this.purchaseOrderId = purchaseOrderId;
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
         this.totalAmount = totalAmount;
+        this.orderStatus = orderStatus;
         this.supplierName = supplierName;
-        this.productNames = productNames;
+        this.products = products;
     }
 
     // Getters and Setters
@@ -56,6 +60,14 @@ public class PurchaseOrderDTO {
         this.totalAmount = totalAmount;
     }
 
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
     public String getSupplierName() {
         return supplierName;
     }
@@ -64,11 +76,11 @@ public class PurchaseOrderDTO {
         this.supplierName = supplierName;
     }
 
-    public List<String> getProductNames() {
-        return productNames;
+    public List<PurchaseOrderProductDTO> getProducts() {
+        return products;
     }
 
-    public void setProductNames(List<String> productNames) {
-        this.productNames = productNames;
+    public void setProducts(List<PurchaseOrderProductDTO> products) {
+        this.products = products;
     }
 }

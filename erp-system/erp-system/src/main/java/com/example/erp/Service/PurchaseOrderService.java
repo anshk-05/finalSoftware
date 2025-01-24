@@ -1,75 +1,126 @@
 package com.example.erp.Service;
 
-import com.example.erp.Model.PurchaseOrder;
-import com.example.erp.Model.Supplier;
+import com.example.erp.DTO.PurchaseOrderDTO;
+import com.example.erp.DTO.PurchaseOrderProductDTO;
 import com.example.erp.Model.Product;
+import com.example.erp.Model.PurchaseOrder;
+import com.example.erp.Model.PurchaseOrderProduct;
+import com.example.erp.Repository.ProductRepository;
 import com.example.erp.Repository.PurchaseOrderRepository;
-import com.example.erp.Service.SupplierService;
-import com.example.erp.Service.ProductService;
+import com.example.erp.Repository.PurchaseOrderProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class PurchaseOrderService {
     private final PurchaseOrderRepository purchaseOrderRepository;
-    private final SupplierService supplierService;
-    private final ProductService productService;
+    private final ProductRepository productRepository;
+    private final PurchaseOrderProductRepository purchaseOrderProductRepository;
 
-    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, SupplierService supplierService, ProductService productService) {
+    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository,
+                                ProductRepository productRepository,
+                                PurchaseOrderProductRepository purchaseOrderProductRepository) {
         this.purchaseOrderRepository = purchaseOrderRepository;
-        this.supplierService = supplierService;
-        this.productService = productService;
+        this.productRepository = productRepository;
+        this.purchaseOrderProductRepository = purchaseOrderProductRepository;
     }
 
     // Get all purchase orders
-    public List<PurchaseOrder> getAllPurchaseOrders() {
-        return purchaseOrderRepository.findAll();
+    public List<PurchaseOrderDTO> getAllPurchaseOrders() {
+        return purchaseOrderRepository.findAll().stream()
+                .map(order -> new PurchaseOrderDTO(
+                        order.getPurchaseOrderId(),
+                        order.getOrderDate(),
+                        order.getDeliveryDate(),
+                        order.getTotalAmount(),
+                        order.getOrderStatus(),
+                        order.getSupplier() != null ? order.getSupplier().getSupplierName() : null,
+                        order.getProducts().stream()
+                                .map(poProduct -> new PurchaseOrderProductDTO(
+                                        poProduct.getProduct().getProductId(),
+                                        poProduct.getProduct().getProductName(),
+                                        poProduct.getQuantity(),
+                                        poProduct.getPricePerUnit()
+                                ))
+                                .collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
     }
 
-    // Get purchase order by ID
-    public PurchaseOrder getPurchaseOrderById(Integer id) {
+    // Get a single purchase order by ID
+    public PurchaseOrder getPurchaseOrderEntityById(Integer id) {
         return purchaseOrderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Purchase Order not found with id " + id));
+                .orElseThrow(() -> new RuntimeException("Purchase order not found with id " + id));
+    }
+
+    // Get purchase order as DTO
+    public PurchaseOrderDTO getPurchaseOrderById(Integer id) {
+        PurchaseOrder order = getPurchaseOrderEntityById(id);
+        return new PurchaseOrderDTO(
+                order.getPurchaseOrderId(),
+                order.getOrderDate(),
+                order.getDeliveryDate(),
+                order.getTotalAmount(),
+                order.getOrderStatus(),
+                order.getSupplier() != null ? order.getSupplier().getSupplierName() : null,
+                order.getProducts().stream()
+                        .map(poProduct -> new PurchaseOrderProductDTO(
+                                poProduct.getProduct().getProductId(),
+                                poProduct.getProduct().getProductName(),
+                                poProduct.getQuantity(),
+                                poProduct.getPricePerUnit()
+                        ))
+                        .collect(Collectors.toList())
+        );
     }
 
     // Create a new purchase order
     public PurchaseOrder createPurchaseOrder(PurchaseOrder purchaseOrder) {
-        // Ensure the supplier exists
-        Supplier supplier = supplierService.getSupplierById(purchaseOrder.getSupplier().getSupplierId());
-        purchaseOrder.setSupplier(supplier);
+        // Save the order itself
+        PurchaseOrder savedOrder = purchaseOrderRepository.save(purchaseOrder);
 
-        // Ensure all products exist
-        List<Product> products = purchaseOrder.getProducts().stream()
-                .map(product -> productService.getProductById(product.getProductId()))
-                .collect(Collectors.toList());
-        purchaseOrder.setProducts(products);
+        // Link products to the order
+        for (PurchaseOrderProduct poProduct : purchaseOrder.getProducts()) {
+            Product product = productRepository.findById(poProduct.getProduct().getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found with id " + poProduct.getProduct().getProductId()));
 
-        return purchaseOrderRepository.save(purchaseOrder);
+            poProduct.setPurchaseOrder(savedOrder); // Link to the saved order
+            poProduct.setProduct(product);          // Link the product entity
+            purchaseOrderProductRepository.save(poProduct);
+        }
+
+        return savedOrder;
     }
 
     // Update an existing purchase order
-    public PurchaseOrder updatePurchaseOrder(PurchaseOrder existingOrder, PurchaseOrder orderDetails) {
-        existingOrder.setOrderDate(orderDetails.getOrderDate());
-        existingOrder.setDeliveryDate(orderDetails.getDeliveryDate());
-        existingOrder.setTotalAmount(orderDetails.getTotalAmount());
+    public PurchaseOrder updatePurchaseOrder(PurchaseOrder existingOrder, PurchaseOrder updatedDetails) {
+        existingOrder.setOrderDate(updatedDetails.getOrderDate());
+        existingOrder.setDeliveryDate(updatedDetails.getDeliveryDate());
+        existingOrder.setTotalAmount(updatedDetails.getTotalAmount());
+        existingOrder.setOrderStatus(updatedDetails.getOrderStatus());
 
-        // Update linked supplier
-        Supplier supplier = supplierService.getSupplierById(orderDetails.getSupplier().getSupplierId());
-        existingOrder.setSupplier(supplier);
+        // Clear old product relationships and add updated ones
+        purchaseOrderProductRepository.deleteAll(existingOrder.getProducts());
+        existingOrder.getProducts().clear();
 
-        // Update linked products
-        List<Product> products = orderDetails.getProducts().stream()
-                .map(product -> productService.getProductById(product.getProductId()))
-                .collect(Collectors.toList());
-        existingOrder.setProducts(products);
+        for (PurchaseOrderProduct poProduct : updatedDetails.getProducts()) {
+            Product product = productRepository.findById(poProduct.getProduct().getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found with id " + poProduct.getProduct().getProductId()));
+
+            poProduct.setPurchaseOrder(existingOrder); // Link to the existing order
+            poProduct.setProduct(product);            // Link the product entity
+            purchaseOrderProductRepository.save(poProduct);
+        }
 
         return purchaseOrderRepository.save(existingOrder);
     }
 
     // Delete a purchase order
     public void deletePurchaseOrder(PurchaseOrder purchaseOrder) {
+        purchaseOrderProductRepository.deleteAll(purchaseOrder.getProducts());
         purchaseOrderRepository.delete(purchaseOrder);
     }
 }

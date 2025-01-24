@@ -10,13 +10,13 @@ const LoginPage = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        console.log("Attempting login with:", { username, password }); // Log input data
+        console.log("Attempting login with:", { username, password });
         try {
             const response = await axios.post("http://localhost:8080/auth/login", {
                 username,
                 password,
             });
-            console.log("Response from backend:", response.data); // Log backend response
+            console.log("Response from backend:", response.data);
             const { token, role } = response.data;
     
             sessionStorage.setItem("token", token);
@@ -29,16 +29,29 @@ const LoginPage = () => {
                 case "HR Manager":
                     navigate("/hr-manager");
                     break;
-                // Add other roles here
+                case "Finance Manager":
+                    navigate("/finance");
+                    break;
+                case "Procurement Team":
+                    navigate("/procurement");
+                    break;
+                case "Warehouse Manager":
+                    navigate("/warehouse");
+                    break;
+                case "Executive":
+                    navigate("/executive");
+                    break;
+                case "Admin":
+                    navigate("/admin");
+                    break;
                 default:
                     setError("No dashboard available for this role.");
             }
         } catch (err) {
-            console.error("Error:", err); // Log error
+            console.error("Error:", err);
             setError("Invalid username or password.");
         }
     };
-    
 
     return (
         <div style={{ textAlign: "center", marginTop: "50px" }}>

@@ -3,10 +3,10 @@ package com.example.erp.Model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
-import com.example.erp.Model.Supplier;
 
 @Entity
 public class PurchaseOrder {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer purchaseOrderId;
@@ -15,28 +15,26 @@ public class PurchaseOrder {
     private LocalDate deliveryDate;
     private Double totalAmount;
 
+    @Column(length = 50)
+    private String orderStatus;
+
     @ManyToOne
     @JoinColumn(name = "supplier_id", nullable = false)
-    private Supplier supplier; // Each purchase order is linked to a single supplier
+    private Supplier supplier;
 
-    @ManyToMany
-    @JoinTable(
-            name = "purchase_order_product",
-            joinColumns = @JoinColumn(name = "purchase_order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> products; // A purchase order can include multiple products
+    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PurchaseOrderProduct> products;
 
-    // Constructors
+    // Default Constructor
     public PurchaseOrder() {}
 
-    public PurchaseOrder(Integer purchaseOrderId, LocalDate orderDate, LocalDate deliveryDate, Double totalAmount, Supplier supplier, List<Product> products) {
-        this.purchaseOrderId = purchaseOrderId;
+    // Parameterized Constructor
+    public PurchaseOrder(LocalDate orderDate, LocalDate deliveryDate, Double totalAmount, String orderStatus, Supplier supplier) {
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
         this.totalAmount = totalAmount;
+        this.orderStatus = orderStatus;
         this.supplier = supplier;
-        this.products = products;
     }
 
     // Getters and Setters
@@ -72,6 +70,14 @@ public class PurchaseOrder {
         this.totalAmount = totalAmount;
     }
 
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
     public Supplier getSupplier() {
         return supplier;
     }
@@ -80,12 +86,11 @@ public class PurchaseOrder {
         this.supplier = supplier;
     }
 
-    public List<Product> getProducts() {
+    public List<PurchaseOrderProduct> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(List<PurchaseOrderProduct> products) {
         this.products = products;
     }
 }
-

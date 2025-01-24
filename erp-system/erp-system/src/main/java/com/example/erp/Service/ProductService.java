@@ -4,8 +4,8 @@ import com.example.erp.Model.Product;
 import com.example.erp.Repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
-
 
 @Service
 public class ProductService {
@@ -37,6 +37,8 @@ public class ProductService {
         existingProduct.setCategory(productDetails.getCategory());
         existingProduct.setPrice(productDetails.getPrice());
         existingProduct.setStockLevel(productDetails.getStockLevel());
+        existingProduct.setReorderLevel(productDetails.getReorderLevel());
+        existingProduct.setLastPurchaseDate(productDetails.getLastPurchaseDate());
         existingProduct.setStore(productDetails.getStore());
         existingProduct.setSupplier(productDetails.getSupplier());
         return productRepository.save(existingProduct);
@@ -45,5 +47,22 @@ public class ProductService {
     // Delete a product
     public void deleteProduct(Product product) {
         productRepository.delete(product);
+    }
+
+    // Get products below reorder level
+    public List<Product> getProductsBelowReorderLevel() {
+        return productRepository.findProductsBelowReorderLevel();
+    }
+
+    // Get products by supplier ID
+    public List<Product> getProductsBySupplier(Integer supplierId) {
+        return productRepository.findBySupplier_SupplierId(supplierId);
+    }
+
+    // Update last purchase date for a product
+    public Product updateLastPurchaseDate(Integer productId, LocalDate lastPurchaseDate) {
+        Product product = getProductById(productId);
+        product.setLastPurchaseDate(lastPurchaseDate);
+        return productRepository.save(product);
     }
 }

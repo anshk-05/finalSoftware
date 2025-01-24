@@ -7,9 +7,10 @@ public class SupplierDTO {
     private String location;
     private String contractTerms;
 
-    // Constructors
+    // Default Constructor
     public SupplierDTO() {}
 
+    // Parameterized Constructor
     public SupplierDTO(Integer supplierId, String supplierName, String contactDetails, String location, String contractTerms) {
         this.supplierId = supplierId;
         this.supplierName = supplierName;

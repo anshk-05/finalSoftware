@@ -6,7 +6,6 @@ import com.example.erp.Service.PurchaseOrderService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -21,30 +20,13 @@ public class PurchaseOrderController {
     // Get all purchase orders
     @GetMapping
     public List<PurchaseOrderDTO> getAllPurchaseOrders() {
-        return purchaseOrderService.getAllPurchaseOrders().stream()
-                .map(order -> new PurchaseOrderDTO(
-                        order.getPurchaseOrderId(),
-                        order.getOrderDate(),
-                        order.getDeliveryDate(),
-                        order.getTotalAmount(),
-                        order.getSupplier().getSupplierName(),
-                        order.getProducts().stream().map(product -> product.getProductName()).collect(Collectors.toList())
-                ))
-                .collect(Collectors.toList());
+        return purchaseOrderService.getAllPurchaseOrders();
     }
 
     // Get a single purchase order
     @GetMapping("/{id}")
     public PurchaseOrderDTO getPurchaseOrderById(@PathVariable Integer id) {
-        PurchaseOrder order = purchaseOrderService.getPurchaseOrderById(id);
-        return new PurchaseOrderDTO(
-                order.getPurchaseOrderId(),
-                order.getOrderDate(),
-                order.getDeliveryDate(),
-                order.getTotalAmount(),
-                order.getSupplier().getSupplierName(),
-                order.getProducts().stream().map(product -> product.getProductName()).collect(Collectors.toList())
-        );
+        return purchaseOrderService.getPurchaseOrderById(id); // Service should return DTO
     }
 
     // Create a new purchase order
@@ -56,15 +38,15 @@ public class PurchaseOrderController {
     // Update a purchase order
     @PutMapping("/{id}")
     public PurchaseOrder updatePurchaseOrder(@PathVariable Integer id, @RequestBody PurchaseOrder orderDetails) {
-        PurchaseOrder existingOrder = purchaseOrderService.getPurchaseOrderById(id);
+        PurchaseOrder existingOrder = purchaseOrderService.getPurchaseOrderEntityById(id); // Fetch the entity
         return purchaseOrderService.updatePurchaseOrder(existingOrder, orderDetails);
     }
 
     // Delete a purchase order
     @DeleteMapping("/{id}")
     public String deletePurchaseOrder(@PathVariable Integer id) {
-        PurchaseOrder order = purchaseOrderService.getPurchaseOrderById(id);
+        PurchaseOrder order = purchaseOrderService.getPurchaseOrderEntityById(id); // Fetch the entity
         purchaseOrderService.deletePurchaseOrder(order);
-        return "Purchase Order with id " + id + " has been deleted.";
+        return "Purchase order with id " + id + " has been deleted.";
     }
 }

@@ -1,38 +1,54 @@
 package com.example.erp.Model;
 
 import jakarta.persistence.*;
-import com.example.erp.Model.Store;
+import java.time.LocalDate;
 
 @Entity
 public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Use database auto-increment
     private Integer productId;
 
-
+    @Column(nullable = false, length = 100)
     private String productName;
+
+    @Column(length = 50)
     private String category;
+
+    @Column(nullable = false)
     private Double price;
+
+    @Column(nullable = false)
     private Integer stockLevel;
 
-    @ManyToOne
-    @JoinColumn(name = "store_id", nullable = false)
-    private Store store; // Many products belong to one store
+    @Column(nullable = true)
+    private Integer reorderLevel;
+
+    @Column
+    private LocalDate lastPurchaseDate;
 
     @ManyToOne
-    @JoinColumn(name = "supplier_id", nullable = true) // Product may or may not have a supplier
+    @JoinColumn(name = "store_id", nullable = true) // Store is optional
+    private Store store;
+
+    @ManyToOne
+    @JoinColumn(name = "supplier_id", nullable = true) // Supplier is optional
     private Supplier supplier;
 
     // Constructors
     public Product() {}
 
-    public Product(Integer productId, String productName, String category, Double price, Integer stockLevel, Store store) {
+    public Product(Integer productId, String productName, String category, Double price, Integer stockLevel, Integer reorderLevel, LocalDate lastPurchaseDate, Store store, Supplier supplier) {
         this.productId = productId;
         this.productName = productName;
         this.category = category;
         this.price = price;
         this.stockLevel = stockLevel;
+        this.reorderLevel = reorderLevel;
+        this.lastPurchaseDate = lastPurchaseDate;
         this.store = store;
+        this.supplier = supplier;
     }
 
     // Getters and Setters
@@ -74,6 +90,22 @@ public class Product {
 
     public void setStockLevel(Integer stockLevel) {
         this.stockLevel = stockLevel;
+    }
+
+    public Integer getReorderLevel() {
+        return reorderLevel;
+    }
+
+    public void setReorderLevel(Integer reorderLevel) {
+        this.reorderLevel = reorderLevel;
+    }
+
+    public LocalDate getLastPurchaseDate() {
+        return lastPurchaseDate;
+    }
+
+    public void setLastPurchaseDate(LocalDate lastPurchaseDate) {
+        this.lastPurchaseDate = lastPurchaseDate;
     }
 
     public Store getStore() {

@@ -5,6 +5,7 @@ import com.example.erp.Model.Product;
 import com.example.erp.Service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,8 @@ public class ProductController {
                         product.getCategory(),
                         product.getPrice(),
                         product.getStockLevel(),
+                        product.getReorderLevel(),
+                        product.getLastPurchaseDate(),
                         product.getStore() != null ? product.getStore().getStoreName() : null,
                         product.getSupplier() != null ? product.getSupplier().getSupplierName() : null
                 ))
@@ -44,6 +47,8 @@ public class ProductController {
                 product.getCategory(),
                 product.getPrice(),
                 product.getStockLevel(),
+                product.getReorderLevel(),
+                product.getLastPurchaseDate(),
                 product.getStore() != null ? product.getStore().getStoreName() : null,
                 product.getSupplier() != null ? product.getSupplier().getSupplierName() : null
         );
@@ -68,5 +73,47 @@ public class ProductController {
         Product product = productService.getProductById(id);
         productService.deleteProduct(product);
         return "Product with id " + id + " has been deleted.";
+    }
+
+    // Get products below reorder level
+    @GetMapping("/low-stock")
+    public List<ProductDTO> getProductsBelowReorderLevel() {
+        return productService.getProductsBelowReorderLevel().stream()
+                .map(product -> new ProductDTO(
+                        product.getProductId(),
+                        product.getProductName(),
+                        product.getCategory(),
+                        product.getPrice(),
+                        product.getStockLevel(),
+                        product.getReorderLevel(),
+                        product.getLastPurchaseDate(),
+                        product.getStore() != null ? product.getStore().getStoreName() : null,
+                        product.getSupplier() != null ? product.getSupplier().getSupplierName() : null
+                ))
+                .collect(Collectors.toList());
+    }
+
+    // Get products by supplier
+    @GetMapping("/supplier/{supplierId}")
+    public List<ProductDTO> getProductsBySupplier(@PathVariable Integer supplierId) {
+        return productService.getProductsBySupplier(supplierId).stream()
+                .map(product -> new ProductDTO(
+                        product.getProductId(),
+                        product.getProductName(),
+                        product.getCategory(),
+                        product.getPrice(),
+                        product.getStockLevel(),
+                        product.getReorderLevel(),
+                        product.getLastPurchaseDate(),
+                        product.getStore() != null ? product.getStore().getStoreName() : null,
+                        product.getSupplier() != null ? product.getSupplier().getSupplierName() : null
+                ))
+                .collect(Collectors.toList());
+    }
+
+    // Update last purchase date for a product
+    @PutMapping("/{id}/last-purchase-date")
+    public Product updateLastPurchaseDate(@PathVariable Integer id, @RequestParam LocalDate lastPurchaseDate) {
+        return productService.updateLastPurchaseDate(id, lastPurchaseDate);
     }
 }
